@@ -410,9 +410,18 @@ input[type="file"] {
     font-size:0.8em;
 }
 
+@keyframes slideDown {
+  0% {
+    top: -60px;
+  }
+  100% {
+    top: 0px;
+  }
+}
+
 .newUserBanner {
     position: fixed;
-    top: 0;
+    top: -60px;
     left: 0;
     width: 100vw;
     height: 60px;
@@ -429,4 +438,6 @@ input[type="file"] {
     -ms-user-select: none;
     user-select: none;
     cursor: pointer;
+
+    animation: slideDown 0.5s forwards 1s;
 }
