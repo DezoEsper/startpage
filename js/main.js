@@ -242,6 +242,19 @@ function main(){
     append(versionNode, [document.createTextNode("startpage " + VERSION)]);
     append(HelpText, [document.createElement("br"), versionNode]);
     versionNode.className = "version";
+
+    if(localStorage.newUser && JSON.parse(localStorage.newUser) === true) {
+        let newUserBanner = document.createElement("div");
+        newUserBanner.setAttribute("class", "newUserBanner");
+        let newUserText = document.createTextNode("Click here to open the configuration menu.");
+        newUserBanner.appendChild(newUserText);
+        document.body.appendChild(newUserBanner);
+        newUserBanner.addEventListener("click", () => {
+            document.body.removeChild(newUserBanner);
+            configmenuInit();
+            localStorage.newUser = false;
+        });
+    }
 }
 
 

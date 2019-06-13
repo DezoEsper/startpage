@@ -64,8 +64,13 @@ function Tab(name){
 }
 
 Menu.prototype.appendTab = function(name){
+    if(this.tabs.length === 0) {
+        this.menuBar.setAttribute("class", "menuBar hasTabs");
+    }
+
     var tab = new Tab(name);
     this.tabs.push(tab);
+
 
     this.tabBar.appendChild(tab.node);
     this.content.appendChild(tab.content);

@@ -33,8 +33,7 @@
     "bool": {
         "borders": true,
         "alwaysopen": false,
-        "mascot": false,
-        "use_json_file": false
+        "mascot": false
     },
 
     "style": {

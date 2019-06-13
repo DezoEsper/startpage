@@ -7,8 +7,7 @@ function ConfigObject(items){
 var boolItems = {
     borders: "Borders",
     alwaysopen: "Keep all squares open",
-    mascot: "Enable background image/mascot",
-    use_json_file: "Use config.json instead of this menu"
+    mascot: "Enable background image/mascot"
 };
 var bool = new ConfigObject(boolItems);
 
@@ -43,44 +42,30 @@ var extItems = {
 var ext = new ConfigObject(extItems);
 
 
-
-
 function configmenuInit(callback){
-    $.loadJSON("config.json", function(data){
-        if(data.bool.privateMode === true){
-            loadConfig(data, callback);
-        }else if(localStorage.use_json_file == "true" || localStorage.config === undefined){
-            pipe(data, callback);
-        }else{
-            pipe(JSON.parse(localStorage.config), callback);
-        }
-    });
-}
-
-// separate function so it wont execute before jQuery.getJSON has finished
-function pipe(data, callback){
-    // create initial menu, config menu or load config on window load
     if(localStorage.config === undefined){
         initmenu = new Menu("Init-Menu", 550, 350);
-        initmenu.appendTab("Choose an Option:");
-        initmenu.makeTabActive(0);
         var initbuttons = initmenu.split(
-                ["Use files.",
-                 "Use configuration menu."],
-                ["Use the config.json file located in the startpage's root directory.",
-                 "Use a GUI to easily configure the startpage's style. Has import/export function."]);
+                ["New here?",
+                 "Been here before?"],
+                ["Load the example configuration and modify it.",
+                 "Select a .json file to import for configuration."]);
         initbuttons[0].addEventListener("click", function(){
-            loadConfig(data, callback);
-            initmenu.kill();
+            $.loadJSON("config.json", function(data){
+                localStorage.newUser = true;
+                initmenu.kill();
+                loadConfig(data, callback);
+            });
         });
         initbuttons[1].addEventListener("click", function(){
-            createMenu(data, callback);
-            initmenu.kill();
+            importConfig(false, callback);
         });
-    }else if(callback === undefined){
-        createMenu(data, callback);
     }else{
-        loadConfig(data, callback);
+        if(callback === undefined){
+            createMenu(JSON.parse(localStorage.config), callback);
+        }else{
+            loadConfig(JSON.parse(localStorage.config), callback);
+        }
     }
 }
 
@@ -206,17 +191,17 @@ function createMenu(data, callback){
     });
     var importButton = configmenu.appendButton("import", "#bb9999");
     importButton.addEventListener("click", function(){
-        importConfig(callback);
+        importConfig(true, callback);
     });
 }
 
 
-function importConfig(callback){
+function importConfig(fromConfigMenu, callback){
     var importinput = document.createElement("input");
     importinput.setAttribute("type", "file");
     importinput.setAttribute("name", "importinput");
 
-    configmenu.menu.appendChild(importinput);
+    document.body.appendChild(importinput);
 
     importinput.addEventListener("change", function(e){
         var file = importinput.files[0];
@@ -226,8 +211,14 @@ function importConfig(callback){
 
         reader.onload = function(e){
             loadConfig(JSON.parse(reader.result), callback);
-            configmenu.kill();
+            if(fromConfigMenu){
+                configmenu.kill();
+            }else{
+                initmenu.kill();
+            }
         };
+
+        document.body.removeChild(importinput);
     });
 
     importinput.click();
@@ -309,7 +300,6 @@ function saveConfig(callback){
         bool[key].value = elem.checked;
         json.bool[key] = elem.checked;
     }
-    localStorage.use_json_file = document.querySelector("input[name='use_json_file'").checked;
     for(var key in style){
         var elem = document.querySelector(
                 "#style input[name='" + key + "'");
