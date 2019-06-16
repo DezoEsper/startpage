@@ -246,8 +246,12 @@ function main(){
     if(localStorage.newUser && JSON.parse(localStorage.newUser) === true) {
         let newUserBanner = document.createElement("div");
         newUserBanner.setAttribute("class", "newUserBanner");
-        let newUserText = document.createTextNode("Click here to open the configuration menu.");
-        newUserBanner.appendChild(newUserText);
+        let newUserSpan = document.createElement("span");
+        newUserSpan.appendChild(document.createTextNode("Click here to open the configuration menu."));
+        newUserBanner.appendChild(newUserSpan);
+        let newUserSpanHelp = document.createElement("span");
+        newUserSpanHelp.appendChild(document.createTextNode("Open it again anytime by writing \"-config\" into the search field."));
+        newUserBanner.appendChild(newUserSpanHelp);
         document.body.appendChild(newUserBanner);
         newUserBanner.addEventListener("click", () => {
             document.body.removeChild(newUserBanner);
